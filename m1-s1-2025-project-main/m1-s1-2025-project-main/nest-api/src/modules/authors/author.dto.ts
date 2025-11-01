@@ -6,7 +6,4 @@ export class CreateAuthorDto {
 
   @IsString()
   lastName: string;
-
-  @IsString()
-  photo: string;
 }
