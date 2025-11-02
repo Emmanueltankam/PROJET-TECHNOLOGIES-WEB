@@ -1,6 +1,14 @@
-export type SaleModel = {
-    id: string;          // Identifiant unique de la vente
-    clientId: string;   // Identifiant du client
-    bookId: string;     // Identifiant du livre
-    date: string;       // Date d'achat (format ISO)
-};
+import { Controller, Post, Body } from '@nestjs/common';
+import { SaleService } from './sale.service';
+import { CreateSaleDto } from './create-sale.dto';
+import { SaleModel } from './sale.model';
+
+@Controller('sales')
+export class SaleController {
+    constructor(private readonly saleService: SaleService) {}
+
+    @Post()
+    create(@Body() createSaleDto: CreateSaleDto): SaleModel {
+        return this.saleService.createSale(createSaleDto);
+    }
+}
