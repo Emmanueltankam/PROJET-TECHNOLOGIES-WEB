@@ -12,6 +12,6 @@ export class AuthorEntity extends BaseEntity {
 
   @Column({ name: 'last_name', type: 'varchar' })
   lastName: string;
-  @Column({ name: 'photo', type: 'varchar' })
-  photo: string;
+  @Column({ name: 'photo', type: 'varchar',nullable: true })
+  photo: string; // Champ pour la photo de l'auteur
 }

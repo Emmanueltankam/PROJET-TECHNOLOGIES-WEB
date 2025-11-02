@@ -8,5 +8,5 @@ export class CreateAuthorDto {
   lastName: string;
 
   @IsString()
-  photo: string;
+  photo: string; // Ajout du champ pour la photo de l'auteur
 }
