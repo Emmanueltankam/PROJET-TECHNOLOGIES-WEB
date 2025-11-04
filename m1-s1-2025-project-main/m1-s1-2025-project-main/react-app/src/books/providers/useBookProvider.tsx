@@ -5,6 +5,7 @@ import axios from 'axios'
 export const useBookProvider = () => {
   const [books, setBooks] = useState<BookModel[]>([])
 
+  // chargement de la liste des livres
   const loadBooks = () => {
     axios
       .get('http://localhost:3000/books')
@@ -14,6 +15,7 @@ export const useBookProvider = () => {
       .catch(err => console.error(err))
   }
 
+  // Création d'un nouveau livre
   const createBook = (book: CreateBookModel) => {
     axios
       .post('http://localhost:3000/books', book)
@@ -32,14 +34,23 @@ export const useBookProvider = () => {
       .catch(err => console.error(err))
   }
 
-  const deleteBook = (id: string) => {
-    axios
-      .delete(`http://localhost:3000/books/${id}`)
-      .then(() => {
-        loadBooks()
-      })
-      .catch(err => console.error(err))
+// Suppression d'un livre avec confirmation
+  const deleteBook = async (id: string) => {
+    const confirmation = window.confirm('Êtes-vous sûr de vouloir supprimer ce livre ?')
+    if (!confirmation) return
+
+    try {
+      await axios.delete(`http://localhost:3000/books/${id}`)
+      setBooks(prev => prev.filter(b => b.id !== id))
+    } catch (error) {
+      console.error('Erreur lors de la suppression du livre :', error)
+    }
   }
 
-  return { books, loadBooks, createBook, updateBook, deleteBook }
+  return { books, loadBooks, createBook, deleteBook }
 }
+
+
+
+
+
