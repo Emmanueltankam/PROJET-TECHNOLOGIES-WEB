@@ -15,35 +15,51 @@ export class CreateBookDto {
 
   @IsString()
   coverImage: string; // Champ pour l'image de couverture du livre
+
+  @IsOptional()
+  @IsString()
+  description?: string; // Champ optionnel pour la description du livre
+
+  @IsOptional()
+  @IsString()
+  genre?: string; // Champ optionnel pour le genre du livre
 }
 
 export class UpdateBookDto {
+  @IsOptional()
   @IsString()
-  @IsOptional()
-  title: string;
+  title?: string; // Champ optionnel pour le titre
 
+  @IsOptional()
   @IsUUID(4)
-  @IsOptional()
-  authorId: AuthorId;
+  authorId?: AuthorId; // Champ optionnel pour l'identifiant de l'auteur
 
+  @IsOptional()
   @IsInt()
   @Min(1500)
   @Max(2025)
+  yearPublished?: number; // Champ optionnel pour l'année de publication
+
   @IsOptional()
-  yearPublished: number;
+  @IsString()
+  description?: string; // Champ optionnel pour la description
+
+  @IsOptional()
+  @IsString()
+  genre?: string; // Champ optionnel pour le genre
 }
 
 export class GetBooksDto {
   @IsInt()
   @Min(1)
   @Max(100)
-  limit: number;
+  limit: number; // Limite de résultats
 
   @IsInt()
   @Min(0)
-  offset: number;
+  offset: number; // Décalage pour la pagination
 
-  @IsString()
   @IsOptional()
-  sort?: string;
+  @IsString()
+  sort?: string; // Champ optionnel pour le tri
 }

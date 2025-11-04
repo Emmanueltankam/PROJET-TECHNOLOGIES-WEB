@@ -41,17 +41,20 @@ export class BookController {
   }
 
   @Post()
-  createBook(@Body() createBookDto: CreateBookDto) {
+  public async createBook(@Body() createBookDto: CreateBookDto) {
     return this.bookService.createBook(createBookDto);
   }
 
   @Patch(':id')
-  updateBook(@Param('id') id: string, @Body() updateBookDto: UpdateBookDto) {
+  public async updateBook(
+      @Param('id') id: string,
+      @Body() updateBookDto: UpdateBookDto,
+  ) {
     return this.bookService.updateBook(id, updateBookDto);
   }
 
   @Delete(':id')
-  deleteBook(@Param('id') id: string) {
+  public async deleteBook(@Param('id') id: string) {
     return this.bookService.deleteBook(id);
   }
 }
