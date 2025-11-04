@@ -19,8 +19,8 @@ export class BookController {
   @Get()
   async getBooks(@Query() input: GetBooksDto): Promise<GetBooksModel> {
     const [property, direction] = input.sort
-      ? input.sort.split(',')
-      : ['title', 'ASC'];
+        ? input.sort.split(',')
+        : ['title', 'ASC'];
 
     const [books, totalCount] = await this.bookService.getAllBooks({
       ...input,

@@ -12,6 +12,9 @@ export class CreateBookDto {
   @Min(1500)
   @Max(2025)
   yearPublished: number;
+
+  @IsString()
+  coverImage: string; // Champ pour l'image de couverture du livre
 }
 
 export class UpdateBookDto {

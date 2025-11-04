@@ -13,15 +13,15 @@ import { BookEntity, BookId } from './entities/book.entity';
 @Injectable()
 export class BookRepository {
   constructor(
-    @InjectRepository(AuthorEntity)
-    private readonly authorRepository: Repository<AuthorEntity>,
-    @InjectRepository(BookEntity)
-    private readonly bookRepository: Repository<BookEntity>,
-    private readonly dataSource: DataSource,
+      @InjectRepository(AuthorEntity)
+      private readonly authorRepository: Repository<AuthorEntity>,
+      @InjectRepository(BookEntity)
+      private readonly bookRepository: Repository<BookEntity>,
+      private readonly dataSource: DataSource,
   ) {}
 
   public async getAllBooks(
-    input?: FilterBooksModel,
+      input?: FilterBooksModel,
   ): Promise<[BookModel[], number]> {
     const [books, totalCount] = await this.bookRepository.findAndCount({
       take: input?.limit,
@@ -69,8 +69,8 @@ export class BookRepository {
   }
 
   public async updateBook(
-    id: string,
-    book: UpdateBookModel,
+      id: string,
+      book: UpdateBookModel,
   ): Promise<BookModel | undefined> {
     const oldBook = await this.bookRepository.findOne({
       where: { id: id as BookId },
@@ -90,7 +90,7 @@ export class BookRepository {
   public async deleteBooks(ids: string[]): Promise<void> {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       await Promise.all(
-        ids.map((id) => transactionalEntityManager.delete(BookEntity, { id })),
+          ids.map((id) => transactionalEntityManager.delete(BookEntity, { id })),
       );
     });
   }

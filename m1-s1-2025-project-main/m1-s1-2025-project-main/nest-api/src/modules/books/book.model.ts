@@ -10,12 +10,14 @@ export type BookModel = {
   title: string;
   author: BookAuthorModel;
   yearPublished: number;
+  coverImage: string; // Ajout du champ pour l'image de couverture
 };
 
 export type CreateBookModel = {
   title: string;
   authorId: AuthorId;
   yearPublished: number;
+  coverImage: string; // Ajout du champ pour l'image de couverture dans le model
 };
 
 export type UpdateBookModel = Partial<CreateBookModel>;
