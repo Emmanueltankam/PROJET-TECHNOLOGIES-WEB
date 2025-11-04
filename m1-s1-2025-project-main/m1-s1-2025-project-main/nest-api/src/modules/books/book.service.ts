@@ -22,6 +22,7 @@ export class BookService {
   }
 
   public async createBook(book: CreateBookModel): Promise<BookModel> {
+    // Ajout de la gestion des nouveaux champs
     return this.bookRepository.createBook(book);
   }
 
@@ -34,7 +35,13 @@ export class BookService {
       return undefined;
     }
 
-    return this.bookRepository.updateBook(id, book);
+    // Fusionner les anciennes données avec les nouvelles données pour la mise à jour
+    const updatedBook = {
+      ...oldBook,
+      ...book,
+    };
+
+    return this.bookRepository.updateBook(id, updatedBook);
   }
 
   public async deleteBook(id: string): Promise<void> {
