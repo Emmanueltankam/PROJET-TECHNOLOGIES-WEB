@@ -1,70 +1,74 @@
+// =====================
+// 📘 CreateBookModal.tsx
+// =====================
+
 import { useEffect, useState } from 'react'
 import type { CreateBookModel } from '../BookModel'
-import { Button, Input, Modal, Select, Space } from 'antd'
+import { Button, Input, Modal, Select, Space, message } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
 import { useBookAuthorsProviders } from '../providers/useBookAuthorsProviders'
 
 interface CreateBookModalProps {
+  // Fonction passée par le parent (BooksPage) pour créer le livre
   onCreate: (book: CreateBookModel) => void
 }
 
 export function CreateBookModal({ onCreate }: CreateBookModalProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState('')
-  const [yearPublished, setYearPublished] = useState(0)
+  const [yearPublished, setYearPublished] = useState<number | undefined>(undefined)
   const [authorId, setAuthorId] = useState<string | undefined>(undefined)
   const { authors, loadAuthors } = useBookAuthorsProviders()
 
-  const onClose = () => {
-    setTitle('')
-    setYearPublished(0)
+  // Charger les auteurs au montage
+  useEffect(() => {
+    loadAuthors()
+  }, [])
+
+  const open = () => setIsOpen(true)
+  const close = () => {
     setIsOpen(false)
+    setTitle('')
+    setYearPublished(undefined)
+    setAuthorId(undefined)
   }
 
-  useEffect(() => {
-    if (isOpen) {
-      loadAuthors()
+  const handleOk = () => {
+    if (!title) {
+      message.error('Le titre est requis')
+      return
     }
-  }, [isOpen])
+    if (!authorId) {
+      message.error('Sélectionnez un auteur')
+      return
+    }
+
+    // Envoie au parent
+    onCreate({
+      title,
+      authorId,
+      yearPublished: yearPublished ?? new Date().getFullYear(),
+    })
+    close()
+  }
 
   return (
     <>
-      <Button
-        icon={<PlusOutlined />}
-        type="primary"
-        onClick={() => setIsOpen(true)}
-      >
+      <Button type="primary" icon={<PlusOutlined />} onClick={open} style={{ margin: '1rem' }}>
         Create Book
       </Button>
-      <Modal
-        open={isOpen}
-        onCancel={onClose}
-        onOk={() => {
-          onCreate({
-            title,
-            yearPublished,
-            authorId: '4540d533-3100-445a-8796-ab5dfd9a3240',
-          })
-          onClose()
-        }}
-        okButtonProps={{
-          disabled: !authorId || !title?.length || !yearPublished,
-        }}
-      >
+      <Modal title="Create a book" open={isOpen} onOk={handleOk} onCancel={close}>
         <Space direction="vertical" style={{ width: '100%' }}>
-          <Input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-          />
+          <Input placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
           <Select
-            style={{ width: '100%' }}
+            placeholder="Select an author"
+            value={authorId}
             options={authors.map(author => ({
               label: `${author.firstName} ${author.lastName}`,
               value: author.id,
             }))}
             onChange={value => setAuthorId(value)}
+            style={{ width: '100%' }}
           />
           <Input
             type="number"
