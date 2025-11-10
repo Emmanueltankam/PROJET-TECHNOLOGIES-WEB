@@ -26,11 +26,11 @@ export class ClientController {
     // Méthode pour mettre à jour un client existant
     @Patch(':id')
     public async updateClient(
-        @Param('id') id: string, // Récupération de l'identifiant du client à mettre à jour
+        @Param('id') id: number, // Récupération de l'identifiant du client à mettre à jour
         @Body() updateClientDto: UpdateClientDto // Données de mise à jour du client
     ) {
         // Appel au service pour mettre à jour le client avec l'identifiant et les nouvelles données
-        return this.clientService.updateClient(id, updateClientDto);
+        return this.clientService.update(id, updateClientDto);
     }
 
     // Méthode pour supprimer un client par son identifiant

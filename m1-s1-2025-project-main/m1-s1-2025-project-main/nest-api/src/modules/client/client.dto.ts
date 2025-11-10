@@ -55,7 +55,7 @@ export class GetClientsDto {
   @Min(1)
   @Max(100)
   limit: number; // Limite de résultats
-
+  
   @IsInt()
   @Min(0)
   offset: number; // Décalage pour la pagination
