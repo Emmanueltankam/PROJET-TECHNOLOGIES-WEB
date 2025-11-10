@@ -16,6 +16,7 @@ export class ClientController {
         return this.clientService.findAll();
     }
 
+    
     // Méthode pour créer un nouveau client
     @Post()
     create(@Body() client: Partial<Client>): Promise<Client> {
