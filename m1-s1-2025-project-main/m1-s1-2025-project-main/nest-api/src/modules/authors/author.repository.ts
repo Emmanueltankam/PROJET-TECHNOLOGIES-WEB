@@ -7,8 +7,8 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class AuthorRepository {
   constructor(
-    @InjectRepository(AuthorEntity)
-    private readonly authorRepository: Repository<AuthorEntity>,
+      @InjectRepository(AuthorEntity)
+      private readonly authorRepository: Repository<AuthorEntity>,
   ) {}
 
   public async getAllAuthors(): Promise<AuthorModel[]> {

@@ -27,4 +27,6 @@ export class BookEntity extends BaseEntity {
   @ManyToOne(() => AuthorEntity, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'author_id' })
   author: AuthorEntity;
+  @Column({ name: 'cover_image', type: 'varchar', nullable: true })
+  coverImage: string; // Champ pour l'image de couverture
 }
