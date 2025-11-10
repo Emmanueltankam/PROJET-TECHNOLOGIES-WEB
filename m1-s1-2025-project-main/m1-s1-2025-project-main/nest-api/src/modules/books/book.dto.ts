@@ -15,8 +15,6 @@ export class CreateBookDto {
 
   @IsString()
   coverImage: string; // Champ pour l'image de couverture du livre
-<<<<<<< HEAD
-=======
 
   @IsOptional()
   @IsString()
@@ -25,7 +23,6 @@ export class CreateBookDto {
   @IsOptional()
   @IsString()
   genre?: string; // Champ optionnel pour le genre du livre
->>>>>>> b97923143bef2fd57fd5881cf0812b6579dee792
 }
 
 export class UpdateBookDto {

@@ -10,3 +10,4 @@ export class CreateAuthorDto {
   @IsString()
   photo: string; // Ajout du champ pour la photo de l'auteur
 }
+
