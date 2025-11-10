@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+<<<<<<< HEAD
+import { Client } from './entities/client.entity';
+=======
 import { Client } from './client.entity';
+>>>>>>> b97923143bef2fd57fd5881cf0812b6579dee792
 
 @Injectable()
 export class ClientService {
@@ -22,4 +26,19 @@ export class ClientService {
     async delete(id: number): Promise<void> {
         await this.clientRepository.delete(id);
     }
+<<<<<<< HEAD
+
+     public async updateClient(
+          id: string,
+          book: UpdateClientModel,
+      ): Promise<ClientModel | undefined> {
+        const oldClient = await this.getClientById(id);
+        if (!oldClient) {
+          return undefined;
+        }
+    
+        return this.ClientRepository.updateClient(id, book);
+      }
+=======
+>>>>>>> b97923143bef2fd57fd5881cf0812b6579dee792
 }
