@@ -55,12 +55,12 @@ export class GetClientsDto {
   @Min(1)
   @Max(100)
   limit: number; // Limite de résultats
-  
+
   @IsInt()
   @Min(0)
   offset: number; // Décalage pour la pagination
 
   @IsOptional()
   @IsString()
- sort?: string; // Champ optionnel pour le tri (ex: "nom", "prenom:DESC")
+  sort: string; // Champ optionnel pour le tri (ex: "nom", "prenom:DESC")
 }

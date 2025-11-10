@@ -15,6 +15,7 @@ export class ClientController {
         // Appel au service pour obtenir la liste des clients
         return this.clientService.findAll();
     }
+    
   
     // Méthode pour créer un nouveau client
     @Post()
@@ -33,10 +34,17 @@ export class ClientController {
         return this.clientService.update(id, updateClientDto);
     }
 
+    // 🔹 Récupérer les détails d’un client
+  @Get(':id')
+  async getDetails(@Param('id') id: number): Promise<Client> {
+    return this.clientService.findOneById(id);
+  }
+}
+
     // Méthode pour supprimer un client par son identifiant
     @Delete(':id')
     delete(@Param('id') id: number): Promise<void> {
-        // Appel au service pour supprimer le client correspondant à l'identifiant
+    // Appel au service pour supprimer le client correspondant à l'identifiant
         return this.clientService.delete(id);
     }
 }
