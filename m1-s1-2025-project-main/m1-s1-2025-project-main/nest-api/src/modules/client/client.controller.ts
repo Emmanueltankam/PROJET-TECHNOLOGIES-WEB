@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 import { Controller, Get, Post, Body, Delete, Param, Patch } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { Client } from './entities/client.entity';
 
 import 
+=======
+import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import { ClientService } from './client.service';
+import { Client } from './client.entity';
+>>>>>>> b97923143bef2fd57fd5881cf0812b6579dee792
 
 @Controller('clients')
 export class ClientController {
