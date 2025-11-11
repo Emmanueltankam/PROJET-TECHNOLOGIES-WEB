@@ -46,18 +46,6 @@ export class ClientService {
     return this.clientRepository.save(updatedClient);
   }
 
-  // 🔹 Méthode pour récupérer les détails d’un client par ID
-  async findOneById(id: number): Promise<Client> {
-    const client = await this.clientRepository.findOne({ where: { id } });
-
-    if (!client) {
-      throw new NotFoundException(`Client avec l'ID ${id} introuvable`);
-    }
-
-    return client;
-  }
-}
-
   //  Supprimer un client
   async delete(id: number): Promise<void> {
     const result = await this.clientRepository.delete(id);

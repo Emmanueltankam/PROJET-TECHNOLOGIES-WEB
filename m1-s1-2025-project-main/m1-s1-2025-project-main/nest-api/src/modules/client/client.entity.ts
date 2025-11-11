@@ -1,19 +1,19 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class Client {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    nom: string;
+  @Column()
+  nom: string;
 
-    @Column()
-    prenom: string;
+  @Column()
+  prenom: string;
 
-    @Column({ nullable: true })
-    email?: string;
+  @Column({ nullable: true })
+  email?: string;
 
-    @Column({ nullable: true })
-    photo?: string; // Lien vers la photo
+  @Column({ nullable: true })
+  photo?: string; // Lien vers la photo
 }
