@@ -34,7 +34,7 @@ export class ClientService {
     return this.clientRepository.save(newClient);
   }
 
-  // 🔹 Mettre à jour un client existant
+  //  Mettre à jour un client existant
   async update(id: number, updatedData: Partial<Client>): Promise<Client> {
     const existingClient = await this.findOneById(id);
 
@@ -46,7 +46,7 @@ export class ClientService {
     return this.clientRepository.save(updatedClient);
   }
 
-  // 🔹 Supprimer un client
+  //  Supprimer un client
   async delete(id: number): Promise<void> {
     const result = await this.clientRepository.delete(id);
     if (result.affected === 0) {
