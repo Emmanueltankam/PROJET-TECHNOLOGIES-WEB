@@ -12,3 +12,9 @@ export type CreateAuthorModel = {
   lastName: string;
   photo: string; // Ajout du champ pour la photo de l'auteur
 };
+
+export type UpdateAuthorModel = {
+  firstName?: string;
+  lastName?: string;
+  photo?: string; // Ajout du champ pour la photo de l'auteur
+};
