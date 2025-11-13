@@ -1,295 +1,519 @@
-import { Button, Skeleton, Space } from 'antd'
-import { useBookDetailsProvider } from '../providers/useBookDetailsProvider'
 import { useEffect, useState } from 'react'
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import { Link } from '@tanstack/react-router'
-import { Route as booksRoute } from '../../routes/books'
+import axios from 'axios'
+import type { BookModel, UpdateBookModel } from '../BookModel'
+import { Button, Card, Input, Modal, Space, Spin, Empty, Alert } from 'antd'
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ArrowLeftOutlined,
+} from '@ant-design/icons'
+import { useNavigate } from '@tanstack/react-router'
 import { validateImageUrl } from '../utils/validateImageUrl'
 
 interface BookDetailsProps {
   id: string
 }
 
-export const BookDetails = ({ id }: BookDetailsProps) => {
-  const { isLoading, book, loadBook } = useBookDetailsProvider(id)
-  const [isCoverValid, setIsCoverValid] = useState<boolean>(false)
+/**
+ * Composant de détails d'un livre
+ *
+ * Affiche les informations complètes d'un livre :
+ * - Image de couverture
+ * - Titre et nom de l'auteur
+ * - Année de publication
+ * - Genre
+ * - Description complète
+ * - Boutons de modification et suppression
+ *
+ * Fonctionnalités :
+ * - Récupération des données depuis l'API
+ * - Edition en ligne du titre, description, genre et image
+ * - Suppression du livre avec confirmation
+ * - Navigation retour vers la liste des livres
+ * - Gestion des erreurs de chargement
+ *
+ * @param id - L'identifiant unique du livre à afficher
+ * @returns JSX Element - La page de détails du livre
+ */
+export function BookDetails({ id }: BookDetailsProps) {
+  const navigate = useNavigate()
+  const API_BASE_URL = 'http://localhost:3000'
 
+  // État pour les données du livre
+  const [book, setBook] = useState<BookModel | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  // État pour la modification
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false)
+  const [tempTitle, setTempTitle] = useState('')
+  const [tempDescription, setTempDescription] = useState('')
+  const [tempGenre, setTempGenre] = useState('')
+  const [tempCoverImage, setTempCoverImage] = useState('')
+  const [isValidImage, setIsValidImage] = useState(true)
+
+  // État pour la suppression
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+
+  /**
+   * Charge les détails du livre depuis l'API au montage du composant
+   */
   useEffect(() => {
-    loadBook()
+    const loadBookDetails = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const response = await axios.get(`${API_BASE_URL}/books/${id}`)
+        setBook(response.data.data || response.data)
+      } catch (err) {
+        console.error('Erreur lors du chargement du livre:', err)
+        setError('Impossible de charger les détails du livre')
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadBookDetails()
   }, [id])
 
-  useEffect(() => {
-    if (book?.coverImage) {
-      validateImageUrl(book.coverImage).then(valid => setIsCoverValid(valid))
-    } else {
-      setIsCoverValid(false)
+  /**
+   * Ouvre la modal de modification et initialise les valeurs temporaires
+   */
+  const showEditModal = () => {
+    if (book) {
+      setTempTitle(book.title)
+      setTempDescription(book.description || '')
+      setTempGenre(book.genre || '')
+      setTempCoverImage(book.coverImage || '')
+      setIsValidImage(true)
+      setIsEditModalVisible(true)
     }
-  }, [book?.coverImage])
-
-  if (isLoading) {
-    return <Skeleton active />
   }
 
+  /**
+   * Valide et envoie la modification du livre à l'API
+   */
+  const handleEditConfirm = async () => {
+    if (!book) return
+
+    try {
+      const updateData: UpdateBookModel = {
+        title: tempTitle,
+        // Envoyer undefined si le champ est vide, et non une chaîne vide
+        ...(tempDescription ? { description: tempDescription } : {}),
+        ...(tempGenre ? { genre: tempGenre } : {}),
+        ...(tempCoverImage ? { coverImage: tempCoverImage } : {}),
+      }
+
+      await axios.patch(`${API_BASE_URL}/books/${book.id}`, updateData)
+
+      // Recharge les données du livre
+      const response = await axios.get(`${API_BASE_URL}/books/${id}`)
+      setBook(response.data.data || response.data)
+      setIsEditModalVisible(false)
+    } catch (err) {
+      console.error('Erreur lors de la modification:', err)
+      setError('Erreur lors de la modification du livre')
+    }
+  }
+
+  /**
+   * Annule la modification et ferme la modal
+   */
+  const handleEditCancel = () => {
+    setIsEditModalVisible(false)
+  }
+
+  /**
+   * Ouvre la modal de confirmation de suppression
+   */
+  const showDeleteConfirm = () => {
+    setIsDeleteModalVisible(true)
+  }
+
+  /**
+   * Valide la suppression du livre et supprime via l'API
+   */
+  const handleDeleteConfirm = async () => {
+    if (!book) return
+
+    try {
+      await axios.delete(`${API_BASE_URL}/books/${book.id}`)
+      setIsDeleteModalVisible(false)
+      // Retour à la liste des livres après suppression
+      await navigate({ to: '/books' })
+    } catch (err) {
+      console.error('Erreur lors de la suppression:', err)
+      setError('Erreur lors de la suppression du livre')
+      setIsDeleteModalVisible(false)
+    }
+  }
+
+  /**
+   * Annule la suppression et ferme la modal
+   */
+  const handleDeleteCancel = () => {
+    setIsDeleteModalVisible(false)
+  }
+
+  /**
+   * Valide l'URL de l'image lors de sa modification
+   */
+  const handleCoverImageChange = async (url: string) => {
+    setTempCoverImage(url)
+    if (!url) {
+      setIsValidImage(true)
+      return
+    }
+    const valid = await validateImageUrl(url)
+    setIsValidImage(valid)
+  }
+
+  /**
+   * Retour à la liste des livres
+   */
+  const handleBackToList = () => {
+    navigate({ to: '/books' })
+  }
+
+  // Affichage du spinner pendant le chargement
+  if (loading) {
+    return (
+      <div
+        style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}
+      >
+        <Spin size="large" />
+      </div>
+    )
+  }
+
+  // Affichage du message d'erreur
+  if (error) {
+    return (
+      <div style={{ padding: '2rem' }}>
+        <Button
+          type="default"
+          icon={<ArrowLeftOutlined />}
+          onClick={handleBackToList}
+          style={{ marginBottom: '1rem' }}
+        >
+          Retour à la liste
+        </Button>
+        <Alert message="Erreur" description={error} type="error" showIcon />
+      </div>
+    )
+  }
+
+  // Affichage du message vide si le livre n'existe pas
   if (!book) {
     return (
-      <div style={{ padding: '2rem', textAlign: 'center' }}>
-        <p>Livre non trouvé</p>
-        <Link to={booksRoute.to}>
-          <Button icon={<ArrowLeftOutlined />}>Retour aux livres</Button>
-        </Link>
+      <div style={{ padding: '2rem' }}>
+        <Button
+          type="default"
+          icon={<ArrowLeftOutlined />}
+          onClick={handleBackToList}
+          style={{ marginBottom: '1rem' }}
+        >
+          Retour à la liste
+        </Button>
+        <Empty
+          description="Le livre n'a pas été trouvé"
+          style={{ marginTop: '2rem' }}
+        />
       </div>
     )
   }
 
   return (
-    <div
-      style={{
-        padding: '2rem',
-        backgroundColor: '#f5f7f8',
-        minHeight: '100vh',
-      }}
-    >
-      {/* Bouton Retour */}
-      <div
-        style={{
-          marginBottom: '2rem',
-          maxWidth: '100%',
-          display: 'flex',
-          justifyContent: 'flex-start',
-          paddingLeft: '1rem',
-        }}
+    <div style={{ padding: '2rem' }}>
+      {/* Bouton de retour à la liste */}
+      <Button
+        type="default"
+        icon={<ArrowLeftOutlined />}
+        onClick={handleBackToList}
+        style={{ marginBottom: '2rem' }}
       >
-        <Link to={booksRoute.to}>
-          <Button icon={<ArrowLeftOutlined />} type="primary">
-            Retour aux livres
-          </Button>
-        </Link>
-      </div>
+        Retour à la liste
+      </Button>
 
-      {/* Container principal */}
-      <div
+      {/* Carte principale de détails du livre */}
+      <Card
         style={{
-          width: '100%',
-          padding: '2rem',
-          display: 'flex',
-          gap: '2rem',
+          borderRadius: '10px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         }}
       >
-        {/* Section Image à gauche */}
         <div
           style={{
-            width: '280px',
-            height: '380px',
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '1.5rem',
-            flexShrink: 0,
-            border: '1px solid #e9ecef',
-            overflow: 'hidden',
+            display: 'grid',
+            gridTemplateColumns: '300px 1fr',
+            gap: '2rem',
           }}
         >
-          {book.coverImage && isCoverValid ? (
-            <img
-              src={book.coverImage}
-              alt={book.title}
-              style={{
-                maxWidth: '100%',
-                maxHeight: '100%',
-                objectFit: 'contain',
-                borderRadius: '8px',
-              }}
-            />
-          ) : (
+          {/* Section gauche : Image de couverture */}
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <div
               style={{
-                width: '150px',
-                height: '200px',
+                width: '100%',
+                aspectRatio: '2/3',
+                backgroundColor: '#f5f5f5',
                 borderRadius: '8px',
-                background: 'linear-gradient(135deg, #e6eef0 0%, #cdd9dc 100%)',
+                overflow: 'hidden',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '48px',
-                color: '#395E66',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                boxShadow: '0 2px 8px rgba(57, 94, 102, 0.15)',
+                marginBottom: '1rem',
               }}
             >
-              {book.title ? book.title.charAt(0) : '📚'}
+              {book.coverImage ? (
+                <img
+                  src={book.coverImage}
+                  alt={book.title}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                  }}
+                  onError={e => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              ) : (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '3rem',
+                  }}
+                >
+                  📚
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Section Détails à droite */}
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: 'white',
-            borderRadius: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-            padding: '2.5rem 2.5rem',
-            border: '1px solid #e9ecef',
-            display: 'flex',
-            flexDirection: 'column',
-          }}
-        >
-          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          {/* Section droite : Informations du livre */}
+          <div>
             {/* Titre du livre */}
-            <div>
-              <h1
-                style={{
-                  fontSize: '2rem',
-                  fontWeight: '700',
-                  color: '#000000',
-                  margin: 0,
-                  lineHeight: '1.3',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                {book.title}
-              </h1>
-            </div>
-
-            {/* Auteur */}
-            <div
+            <h1
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
+                margin: '0 0 0.5rem 0',
+                color: '#395E66',
+                fontSize: '2rem',
               }}
             >
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  color: '#888',
-                  textTransform: 'uppercase',
-                  fontWeight: '600',
-                  letterSpacing: '0.5px',
-                }}
-              >
-                Auteur
-              </div>
-              <div
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '500',
-                  color: '#333',
-                }}
-              >
-                {book.author?.firstName} {book.author?.lastName}
-              </div>
+              {book.title}
+            </h1>
+
+            {/* Auteur du livre */}
+            <div style={{ color: '#666', marginBottom: '1.5rem' }}>
+              <span style={{ fontWeight: 'bold' }}>Auteur :</span>
+              <span style={{ marginLeft: '0.5rem' }}>
+                {book.author.firstName} {book.author.lastName}
+              </span>
             </div>
 
             {/* Année de publication */}
+            <div style={{ marginBottom: '1rem' }}>
+              <span style={{ fontWeight: 'bold', color: '#395E66' }}>
+                Année de publication :
+              </span>
+              <span style={{ marginLeft: '0.5rem' }}>{book.yearPublished}</span>
+            </div>
+
+            {/* Genre du livre */}
+            {book.genre && (
+              <div style={{ marginBottom: '1rem' }}>
+                <span style={{ fontWeight: 'bold', color: '#395E66' }}>
+                  Genre :
+                </span>
+                <span style={{ marginLeft: '0.5rem' }}>{book.genre}</span>
+              </div>
+            )}
+
+            {/* Description du livre */}
+            <div
+              style={{
+                marginTop: '1.5rem',
+                marginBottom: '2rem',
+                paddingTop: '1.5rem',
+                borderTop: '1px solid #eee',
+              }}
+            >
+              <h3 style={{ color: '#395E66', marginBottom: '0.5rem' }}>
+                Description
+              </h3>
+              <p style={{ color: '#666', lineHeight: '1.6' }}>
+                {book.description || 'Pas de description disponible'}
+              </p>
+            </div>
+
+            {/* Boutons d'action : Modifier et Supprimer */}
             <div
               style={{
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '0.5rem',
+                gap: '1rem',
+                paddingTop: '1rem',
+                borderTop: '1px solid #eee',
               }}
             >
-              <div
-                style={{
-                  fontSize: '0.85rem',
-                  color: '#888',
-                  textTransform: 'uppercase',
-                  fontWeight: '600',
-                  letterSpacing: '0.5px',
-                }}
+              <Button
+                type="primary"
+                size="large"
+                icon={<EditOutlined />}
+                onClick={showEditModal}
               >
-                Année de publication
-              </div>
-              <div
-                style={{
-                  fontSize: '1.1rem',
-                  fontWeight: '500',
-                  color: '#333',
-                }}
+                Modifier
+              </Button>
+              <Button
+                type="primary"
+                danger
+                size="large"
+                icon={<DeleteOutlined />}
+                onClick={showDeleteConfirm}
               >
-                {book.yearPublished}
-              </div>
+                Supprimer
+              </Button>
             </div>
-
-            {/* Genre */}
-            {book.genre && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '0.85rem',
-                    color: '#888',
-                    textTransform: 'uppercase',
-                    fontWeight: '600',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  Genre
-                </div>
-                <div
-                  style={{
-                    fontSize: '1rem',
-                    fontWeight: '500',
-                    color: '#333',
-                    display: 'inline-block',
-                    backgroundColor: '#f8f9fa',
-                    padding: '0.5rem 1.2rem',
-                    borderRadius: '6px',
-                    border: '1px solid #dee2e6',
-                  }}
-                >
-                  {book.genre}
-                </div>
-              </div>
-            )}
-
-            {/* Description */}
-            {book.description && (
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.5rem',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '0.85rem',
-                    color: '#888',
-                    textTransform: 'uppercase',
-                    fontWeight: '600',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  Description
-                </div>
-                <div
-                  style={{
-                    backgroundColor: '#f8f9fa',
-                    padding: '1.2rem',
-                    borderRadius: '6px',
-                    border: '1px solid #dee2e6',
-                    fontSize: '0.95rem',
-                    lineHeight: '1.6',
-                    color: '#555',
-                  }}
-                >
-                  {book.description}
-                </div>
-              </div>
-            )}
-          </Space>
+          </div>
         </div>
-      </div>
+      </Card>
+
+      {/* Modal de modification du livre */}
+      <Modal
+        title="Modification du livre"
+        open={isEditModalVisible}
+        onOk={handleEditConfirm}
+        onCancel={handleEditCancel}
+        okText="Enregistrer"
+        cancelText="Annuler"
+        width={600}
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          {/* Champ du titre */}
+          <div>
+            <label
+              style={{
+                fontWeight: 'bold',
+                display: 'block',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Titre du livre
+            </label>
+            <Input
+              value={tempTitle}
+              onChange={e => setTempTitle(e.target.value)}
+              placeholder="Titre du livre"
+            />
+          </div>
+
+          {/* Champ de l'image de couverture */}
+          <div>
+            <label
+              style={{
+                fontWeight: 'bold',
+                display: 'block',
+                marginBottom: '0.5rem',
+              }}
+            >
+              URL de l&apos;image de couverture
+            </label>
+            <Input
+              value={tempCoverImage}
+              onChange={e => handleCoverImageChange(e.target.value)}
+              placeholder="https://..."
+              status={tempCoverImage && !isValidImage ? 'error' : ''}
+            />
+            {tempCoverImage && !isValidImage && (
+              <div
+                style={{ color: '#ff4d4f', fontSize: '12px', marginTop: '4px' }}
+              >
+                L&apos;URL doit pointer vers une image valide
+              </div>
+            )}
+            {tempCoverImage && isValidImage && (
+              <div style={{ marginTop: '8px' }}>
+                <img
+                  src={tempCoverImage}
+                  alt="Aperçu"
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '150px',
+                    objectFit: 'contain',
+                  }}
+                  onError={e => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Champ du genre */}
+          <div>
+            <label
+              style={{
+                fontWeight: 'bold',
+                display: 'block',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Genre
+            </label>
+            <Input
+              value={tempGenre}
+              onChange={e => setTempGenre(e.target.value)}
+              placeholder="Ex: Science-fiction, Thriller, etc."
+            />
+          </div>
+
+          {/* Champ de la description */}
+          <div>
+            <label
+              style={{
+                fontWeight: 'bold',
+                display: 'block',
+                marginBottom: '0.5rem',
+              }}
+            >
+              Description
+            </label>
+            <Input.TextArea
+              value={tempDescription}
+              onChange={e => setTempDescription(e.target.value)}
+              placeholder="Description complète du livre"
+              rows={4}
+            />
+          </div>
+        </Space>
+      </Modal>
+
+      {/* Modal de confirmation de suppression */}
+      <Modal
+        title="Confirmer la suppression"
+        open={isDeleteModalVisible}
+        onOk={handleDeleteConfirm}
+        onCancel={handleDeleteCancel}
+        okText="Supprimer"
+        okType="danger"
+        cancelText="Annuler"
+      >
+        <p>
+          Êtes-vous sûr de vouloir supprimer le livre{' '}
+          <strong>&quot;{book.title}&quot;</strong> ?
+        </p>
+        <p style={{ color: '#ff4d4f', marginTop: '1rem' }}>
+          Cette action est irréversible.
+        </p>
+      </Modal>
     </div>
   )
 }

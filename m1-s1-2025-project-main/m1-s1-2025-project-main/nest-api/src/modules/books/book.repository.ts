@@ -13,15 +13,15 @@ import { BookEntity, BookId } from './entities/book.entity';
 @Injectable()
 export class BookRepository {
   constructor(
-      @InjectRepository(AuthorEntity)
-      private readonly authorRepository: Repository<AuthorEntity>,
-      @InjectRepository(BookEntity)
-      private readonly bookRepository: Repository<BookEntity>,
-      private readonly dataSource: DataSource,
+    @InjectRepository(AuthorEntity)
+    private readonly authorRepository: Repository<AuthorEntity>,
+    @InjectRepository(BookEntity)
+    private readonly bookRepository: Repository<BookEntity>,
+    private readonly dataSource: DataSource,
   ) {}
 
   public async getAllBooks(
-      input?: FilterBooksModel,
+    input?: FilterBooksModel,
   ): Promise<[BookModel[], number]> {
     const [books, totalCount] = await this.bookRepository.findAndCount({
       take: input?.limit,
@@ -36,23 +36,19 @@ export class BookRepository {
   public async getBookById(id: string): Promise<BookModel | undefined> {
     const book = await this.bookRepository.findOne({
       where: { id: id as BookId },
+      relations: { author: true },
     });
 
     if (!book) {
       return undefined;
     }
 
-    const author = await this.authorRepository.findOne({
-      where: { id: book.authorId },
-    });
-
-    if (!author) {
-      return undefined;
-    }
-
     return {
       ...book,
-      author,
+      author: {
+        firstName: book.author.firstName,
+        lastName: book.author.lastName,
+      },
     };
   }
 
@@ -69,11 +65,12 @@ export class BookRepository {
   }
 
   public async updateBook(
-      id: string,
-      book: UpdateBookModel,
+    id: string,
+    book: UpdateBookModel,
   ): Promise<BookModel | undefined> {
     const oldBook = await this.bookRepository.findOne({
       where: { id: id as BookId },
+      relations: { author: true },
     });
 
     if (!oldBook) {
@@ -81,6 +78,22 @@ export class BookRepository {
     }
 
     await this.bookRepository.update(id, book);
+
+    // Retourne le livre mis à jour avec les relations
+    const updatedBook = await this.bookRepository.findOne({
+      where: { id: id as BookId },
+      relations: { author: true },
+    });
+
+    return updatedBook
+      ? {
+          ...updatedBook,
+          author: {
+            firstName: updatedBook.author.firstName,
+            lastName: updatedBook.author.lastName,
+          },
+        }
+      : undefined;
   }
 
   public async deleteBook(id: string): Promise<void> {
@@ -90,7 +103,7 @@ export class BookRepository {
   public async deleteBooks(ids: string[]): Promise<void> {
     await this.dataSource.transaction(async (transactionalEntityManager) => {
       await Promise.all(
-          ids.map((id) => transactionalEntityManager.delete(BookEntity, { id })),
+        ids.map((id) => transactionalEntityManager.delete(BookEntity, { id })),
       );
     });
   }

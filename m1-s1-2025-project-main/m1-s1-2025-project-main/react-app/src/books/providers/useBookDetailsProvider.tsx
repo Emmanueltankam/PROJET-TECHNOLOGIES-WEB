@@ -8,19 +8,19 @@ export const useBookDetailsProvider = (id: string) => {
 
   const loadBook = async () => {
     if (!id) return
-    
+
     setIsLoading(true)
     try {
       console.log(`Loading book with ID: ${id}`)
       const response = await axios.get(`http://localhost:3000/books/${id}`)
       console.log('Book API response:', response.data)
-      
+
       // Gérer différentes structures de réponse
       let bookData = response.data
       if (response.data.data) {
         bookData = response.data.data
       }
-      
+
       // Vérifier que les données du livre contiennent l'auteur
       if (bookData && bookData.author) {
         console.log('Book loaded with author:', bookData.author)

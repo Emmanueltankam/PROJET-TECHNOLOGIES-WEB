@@ -12,7 +12,7 @@ export class BookService {
   constructor(private readonly bookRepository: BookRepository) {}
 
   public async getAllBooks(
-      input?: FilterBooksModel,
+    input?: FilterBooksModel,
   ): Promise<[BookModel[], number]> {
     return this.bookRepository.getAllBooks(input);
   }
@@ -27,21 +27,16 @@ export class BookService {
   }
 
   public async updateBook(
-      id: string,
-      book: UpdateBookModel,
+    id: string,
+    book: UpdateBookModel,
   ): Promise<BookModel | undefined> {
     const oldBook = await this.getBookById(id);
     if (!oldBook) {
       return undefined;
     }
 
-    // Fusionner les anciennes données avec les nouvelles données pour la mise à jour
-    const updatedBook = {
-      ...oldBook,
-      ...book,
-    };
-
-    return this.bookRepository.updateBook(id, updatedBook);
+    // Passer uniquement les champs à mettre à jour, sans modifier oldBook
+    return this.bookRepository.updateBook(id, book);
   }
 
   public async deleteBook(id: string): Promise<void> {
