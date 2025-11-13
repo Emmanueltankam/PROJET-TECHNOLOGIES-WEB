@@ -14,7 +14,14 @@ export function BookList() {
   return (
     <>
       <CreateBookModal onCreate={createBook} />
-      <div style={{ padding: '0 .5rem' }}>
+      <div
+        style={{
+          padding: '2rem',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+          gap: '2rem',
+        }}
+      >
         {books.map(book => (
           <BookListItem
             key={book.id}

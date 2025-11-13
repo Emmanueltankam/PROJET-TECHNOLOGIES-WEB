@@ -6,10 +6,9 @@ import {
   Param,
   Patch,
   Post,
-  Query,
 } from '@nestjs/common';
 import { AuthorService } from './author.service';
-import { CreateAuthorDto } from './author.dto';
+import { CreateAuthorDto, UpdateAuthorDto } from './author.dto';
 
 @Controller('authors')
 export class AuthorController {
@@ -23,5 +22,18 @@ export class AuthorController {
   @Post()
   public async createAuthor(@Body() createAuthorDto: CreateAuthorDto) {
     return this.authorService.createAuthor(createAuthorDto);
+  }
+
+  @Patch(':id')
+  public async updateAuthor(
+    @Param('id') id: string,
+    @Body() updateAuthorDto: UpdateAuthorDto,
+  ) {
+    return this.authorService.updateAuthor(id, updateAuthorDto);
+  }
+
+  @Delete(':id')
+  public async deleteAuthor(@Param('id') id: string) {
+    return this.authorService.deleteAuthor(id);
   }
 }
