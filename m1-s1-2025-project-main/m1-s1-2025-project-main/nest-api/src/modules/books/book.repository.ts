@@ -8,7 +8,7 @@ import {
   FilterBooksModel,
   UpdateBookModel,
 } from './book.model';
-import { BookEntity, BookId } from './book.entity';
+import { BookEntity, BookId } from './entities/book.entity';
 
 @Injectable()
 export class BookRepository {
