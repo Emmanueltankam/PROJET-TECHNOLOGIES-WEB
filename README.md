@@ -1,10 +1,11 @@
 # PROJET-TECHNOLOGIES-WEB
 
 Titre du projet : Bibliothèque de Babel
-1. et contexte
+1.Menbre et role
+
 Emmanuel chef projet
 Brice chef technique
-Mohamed me,bre back end
+Mohamed menbre back end
 sonia  chef d’équipe front end
 malick membre front end
 
