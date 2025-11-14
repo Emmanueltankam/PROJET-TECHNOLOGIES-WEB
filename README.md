@@ -18,12 +18,6 @@ _Projet de Technologies Web_
 ### Contexte
 Ce projet vise à améliorer et moderniser le système de gestion d'une bibliothèque.
 
-### Objectifs
-* *(À compléter : Objectif 1, ex: Permettre la gestion numérique des clients)*
-* *(À compléter : Objectif 2, ex: Fournir une API REST pour les livres et auteurs)*
-* *(À compléter : Objectif 3)*
-
----
 
 ## 3.  Outils et Stack Technique
 
