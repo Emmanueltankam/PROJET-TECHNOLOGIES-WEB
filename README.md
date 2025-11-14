@@ -59,31 +59,30 @@ Ce projet vise à améliorer et moderniser le système de gestion d'une biblioth
 ---
 
 ## 5.  Répartition des Tâches
-
 | Équipe | Tâche | Assigné à | Statut |
 | :--- | :--- | :--- | :--- |
 | **Back-end** | **Module Clients** | **Mohamed** | |
-| Back-end | Implémentation du modèle de données (Client) | Mohamed | `En cours` |
-| Back-end | Logique : Ajout / Liste / Détails (Client) | Mohamed | `À faire` |
+| Back-end | Implémentation du modèle de données (Client) | Mohamed | `Fait` 👍 |
+| Back-end | Logique : Ajout / Liste / Détails (Client) | Mohamed | `Fait` 👍 |
 | **Back-end** | **Module Livres** | **Emmanuel** | |
-| Back-end | Implémentation du modèle de données (Livre) | Emmanuel | `À faire` |
-| Back-end | Logique : Ajout / Liste / Détails (Livre) | Emmanuel | `À faire` |
+| Back-end | Implémentation du modèle de données (Livre) | Emmanuel | `Fait` 👍 |
+| Back-end | Logique : Ajout / Liste / Détails (Livre) | Emmanuel | `Fait` 👍 |
 | **Back-end** | **Module Auteurs** | **Emmanuel** | |
-| Back-end | Implémentation du modèle de données (Auteur) | Emmanuel | `À faire` |
-| Back-end | Logique : Ajout / Liste / Détails (Auteur) | Emmanuel | `À faire` |
+| Back-end | Implémentation du modèle de données (Auteur) | Emmanuel | `Fait` 👍 |
+| Back-end | Logique : Ajout / Liste / Détails (Auteur) | Emmanuel | `Fait` 👍 |
 | **Back-end** | **Module Ventes & Refacto** | **Brice** | |
-| Back-end | Ajout du module Ventes | Brice | `En cours` |
-| Back-end | Implémentation relation Vente <-> Livre/Client | Brice | `En cours` |
-| Back-end | Ajout du champ photo (Book, Author) | Brice | `À faire` |
-| Back-end | Clean code (principes SOLID, DRY...) | Brice | `À faire` |
+| Back-end | Ajout du module Ventes | Brice | `Fait` 👍 |
+| Back-end | Implémentation relation Vente <-> Livre/Client | Brice | `Fait` 👍 |
+| Back-end | Ajout du champ photo (Book, Author) | Brice | `Fait` 👍 |
+| Back-end | Clean code (principes SOLID, DRY...) | Brice | `Fait` 👍 |
 | **Front-end** | **Routing & Data** | **Sonia** | |
-| Front-end | Ajouter les routes pour le CRUD (Client, etc.) | Sonia | `En cours` |
-| Front-end | Mettre en relation avec la BDD (fetch) | Sonia | `À faire` |
-| Front-end | Afficher la photo (Book, Client) | Sonia | `À faire` |
+| Front-end | Ajouter les routes pour le CRUD (Client, etc.) | Sonia | `Fait` 👍 |
+| Front-end | Mettre en relation avec la BDD (fetch) | Sonia | `Fait` 👍 |
+| Front-end | Afficher la photo (Book, Client) | Sonia | `Fait` 👍 |
 | **Front-end** | **Style & Intégration** | **Malick** | |
-| Front-end | Styliser la page Clients (Liste + Détails) | Malick | `En cours` |
-| Front-end | Styliser la page Livres (Liste + Détails) | Malick | `À faire` |
-| Front-end | Styliser la page Auteurs (Liste + Détails) | Malick | `À faire` |
+| Front-end | Styliser la page Clients (Liste + Détails) | Malick | `Fait` 👍 |
+| Front-end | Styliser la page Livres (Liste + Détails) | Malick | `Fait` 👍 |
+| Front-end | Styliser la page Auteurs (Liste + Détails) | Malick | `Fait` 👍 |
 
 ---
 
