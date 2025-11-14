@@ -3,7 +3,7 @@ _Projet de Technologies Web_
 
 ---
 
-## 1. 👥 Équipe et Rôles
+## 1.  Équipe et Rôles
 
 * **Emmanuel :** Chef de projet
 * **Brice :** Chef technique
@@ -13,7 +13,7 @@ _Projet de Technologies Web_
 
 ---
 
-## 2. 🎯 Contexte et Objectifs
+## 2.  Contexte et Objectifs
 
 ### Contexte
 Ce projet vise à améliorer et moderniser le système de gestion d'une bibliothèque.
@@ -25,7 +25,7 @@ Ce projet vise à améliorer et moderniser le système de gestion d'une biblioth
 
 ---
 
-## 3. 🛠️ Outils et Stack Technique
+## 3.  Outils et Stack Technique
 
 ### Back-end
 * **Langage :** Typescript
@@ -42,7 +42,7 @@ Ce projet vise à améliorer et moderniser le système de gestion d'une biblioth
 
 ---
 
-## 4. ✨ Fonctionnalités Prévues
+## 4.  Fonctionnalités Prévues
 
 * **Gestion des Clients :**
     * Implémentation du modèle de données
@@ -64,7 +64,7 @@ Ce projet vise à améliorer et moderniser le système de gestion d'une biblioth
 
 ---
 
-## 5. 📋 Répartition des Tâches
+## 5.  Répartition des Tâches
 
 | Équipe | Tâche | Assigné à | Statut |
 | :--- | :--- | :--- | :--- |
@@ -93,5 +93,5 @@ Ce projet vise à améliorer et moderniser le système de gestion d'une biblioth
 
 ---
 
-## 6. 🎨 Style de Référence
+
 
